@@ -140,8 +140,8 @@ class App extends Component {
     //console.log(this.state)
     await contract.methods.addProposal(this.state.name,
         this.state.tokenName,
-        1,
-        1,
+        parseInt(this.state.startPrice),
+        parseInt(this.state.estimatedPrice),
         this.state.desc
       ).send({from: this.state.accounts[0]});    
   }
@@ -219,7 +219,7 @@ class App extends Component {
         Copyright GEEKSPIRITS
         </div>
 
-        <div>The final say belongs to: {this.state.storageValue}, and feel free to send some ether to this address.</div>
+        <div>The final say belongs to geek.</div>
       </div>
     );
   }
