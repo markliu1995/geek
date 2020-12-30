@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import RecordContract from "./contracts/Record.json";
 import getWeb3 from "./getWeb3";
-
+// import {Table} from 'react-bootstrap';
+import { Button, Table,Form,Row,Col, Jumbotron } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
-
 
 class App extends Component {
   state = { storageValue: 0, 
@@ -19,7 +20,7 @@ class App extends Component {
     estimatedPrice: 0,
     desc: '',
   };
-  nameMapping = {"0x25D716f9b27c07E9A34FaBd4BB1485AB173e4047":"中本聪","0x07a75587AFdA3E0BE7913711C2124048dc40A550":"MARK","0x3cFd366e74601BF1DB379912889262e071E8C63a":"Kimi"};
+
 
   componentDidMount = async () => {
     try {
@@ -31,7 +32,7 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      console.log(networkId);
+     
       const deployedNetwork = RecordContract.networks[networkId];
       const instance = new web3.eth.Contract(
         RecordContract.abi,
@@ -73,19 +74,14 @@ class App extends Component {
       var b = [];
       var res1 = await contract.methods.allProposals(i).call();
       var _date = new Date(res1.time * 1000);
-      var Y = _date.getFullYear() + '-';
    
-      var M = (_date.getMonth()+1 < 10 ? '0'+(_date.getMonth()+1) : _date.getMonth()+1) + '-';
+      var M = (_date.getMonth()+1 < 10 ? '0'+(_date.getMonth()+1) : _date.getMonth()+1) + ' ';
   
-      var D = _date.getDate() + ' ';
+      var D = _date.getDate() + '/';
   
-      var h = _date.getHours() + ':';
-  
-      var m = _date.getMinutes() + ':';
-  
-      var s = _date.getSeconds();
-  
-      var date = Y+M+D+h+m+s;
+      var h = _date.getHours() + '';
+    
+      var date = D+M+h;
   
       //console.log(res1.proposedByWho,res1.tokenName, res1.startPrice, res1.estimatedPrice, res1.time, res1.description);
       b = [res1.proposedByWho,res1.tokenName, res1.startPrice, res1.estimatedPrice, date, res1.description];
@@ -98,7 +94,6 @@ class App extends Component {
         allProposals: a
       }
     )
-
   }
 
 
@@ -151,8 +146,8 @@ class App extends Component {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
-    console.log(this.state.allProposals);
-    var content = this.state.allProposals.map(
+    // console.log(this.state.allProposals);
+    var content = this.state.allProposals.reverse().map(
       (item, index) => {
         return <tr id={index}>
           {item && item.map(
@@ -165,61 +160,93 @@ class App extends Component {
       }
     )
     return (
-      <div className="App">
-        <div id="header">
-        <h1>INVESTMENT RECORD</h1>
-        </div>
-        <div id="nav">
-        <h3>?</h3>
-        DASHBOARD<br></br>
-        CHARTS<br></br>
-        HISTORY<br></br>
-        </div>
+      <div className="app">
+        <br />
+        <Jumbotron>
+          <h1>Hello, Work only on Ropsten network!</h1>
+          <p>
+          Please contact mark if you have any questions.
+          </p>
+          <br />
+        </Jumbotron>
 
-        <div id="section">
-        <h1 id="header">TOKEN</h1>
-        <h2 id="header">
-          Hi,{this.nameMapping[this.state.accounts]}.
-        </h2>
-        <h2 id="header">
-          Make a suggestion.
-        </h2>
-        <p>
-          <br></br>
-          name<input type="text" value={this.state.name} onChange={this.handleProposalValueName}></input>
-          <br></br>
-          tokenName<input type="text" value={this.state.tokenName} onChange={this.handleProposalValueTokenName}></input>
-          <br></br>
-          startPrice<input type="text" value={this.state.startPrice} onChange={this.handleProposalValuestartPrice}></input>
-          <br></br>
-          estimatedPrice<input type="text" value={this.state.estimatedPrice} onChange={this.handleProposalValueEstimatedPrice}></input>
-          <br></br>
-          desc<input type="text" value={this.state.desc} onChange={this.handleProposalValueDesc}></input>
-          <br></br>
-          <button onClick={this.addProposal}>提交</button>
-        </p>
-        <p>
-        <table border="5" width="800" height="200">
-        <tr>
-          <th>NAME</th>
-          <th>TOKEN PROPOSED</th>
-          <th>START PRICE</th>
-          <th>END PRICE</th>
-          <th>TIME</th>
-          <th>DESC</th>
-        </tr>
-        {content}
+        <Form>
+          <Form.Group as={Row} >
+            <Form.Label column sm={2} >
+              Your Name
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Name Exp: Mark"  value={this.state.name} onChange={this.handleProposalValueName}/>
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} >
+            <Form.Label column sm={2}>
+              Token Name
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Token Name Exp: ETH" value={this.state.tokenName} onChange={this.handleProposalValueTokenName} />
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} >
+            <Form.Label column sm={2}>
+              Current Price
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Current Price" value={this.state.startPrice} onChange={this.handleProposalValuestartPrice}/>
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} >
+            <Form.Label column sm={2}>
+              Target Price
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Target Price" value={this.state.estimatedPrice} onChange={this.handleProposalValueEstimatedPrice}/>
+            </Col>
+          </Form.Group>
+
+          <Form.Group as={Row} >
+            <Form.Label column sm={2}>
+            Investment reasons
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Investment reasons" value={this.state.desc} onChange={this.handleProposalValueDesc} />
+            </Col>
+          </Form.Group>
+
+          <br />
+          <Form.Group as={Row}>
+            <Col sm={{ span: 10, offset: 2 }}>
+              <Button type="submit" onClick={this.addProposal}>Submit</Button>
+            </Col>
+          </Form.Group>
+        </Form>
+
+        <br />
 
 
-        </table>
-        </p>
-        </div>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Token</th>
+              <th scope="col">Current</th>
+              <th scope="col">Target</th>
+              <th scope="col">Submission</th>
+              <th scope="col">Investment Reasons</th>
+            </tr>
+          </thead>
+          <tbody>
+            {content}
+          </tbody>
 
+        </Table>
+        <br />
         <div id="footer">
-        Copyright GEEKSPIRITS
+        <p>Copyright GEEKSPIRITS</p>
         </div>
-
-        <div>The final say belongs to geek.</div>
       </div>
     );
   }
