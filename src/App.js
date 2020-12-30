@@ -19,6 +19,7 @@ class App extends Component {
     startPrice: 0,
     estimatedPrice: 0,
     desc: '',
+    index:null
   };
 
 
@@ -126,6 +127,11 @@ class App extends Component {
         desc: event.target.value,
     })
   };
+  handleProposalValueIndex = async(event) => {
+    this.setState({
+        index: event.target.value,
+    })
+  };
   handlePost = () =>{
     const {name} = this.state;
     console.log(name);
@@ -139,6 +145,15 @@ class App extends Component {
         parseInt(this.state.estimatedPrice),
         this.state.desc
       ).send({from: this.state.accounts[0]});    
+  }
+
+  deleteProposal = async() => {
+    const {contract, accounts} = this.state;
+    if (accounts[0] !== this.state.storageValue){
+      alert("You do not have access...");
+    } else{
+      await contract.methods.deleteByIndex(parseInt(this.state.index)).send({from:this.state.accounts[0]});
+    }
   }
 
 
@@ -232,8 +247,8 @@ class App extends Component {
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Token</th>
-              <th scope="col">Current</th>
-              <th scope="col">Target</th>
+              <th scope="col">Current($)</th>
+              <th scope="col">Target($)</th>
               <th scope="col">Submission</th>
               <th scope="col">Investment Reasons</th>
             </tr>
@@ -244,6 +259,22 @@ class App extends Component {
 
         </Table>
         <br />
+        <Form>
+        <Form.Group as={Row} >
+            <Form.Label column sm={2}>
+              Index
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Control type="text" placeholder="Target Price" value={this.state.estimatedPrice} onChange={this.handleProposalValueIndex}/>
+            </Col>
+          </Form.Group>
+        <br />
+        <Form.Group as={Row}>
+            <Col sm={{ span: 10, offset: 2 }}>
+              <Button type="submit" onClick={this.deleteProposal}>DeleteOnlyByOwner</Button>
+            </Col>
+          </Form.Group>
+        </Form>
         <div id="footer">
         <p>Copyright GEEKSPIRITS</p>
         </div>
